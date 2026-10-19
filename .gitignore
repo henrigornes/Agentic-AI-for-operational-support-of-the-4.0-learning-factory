@@ -1,0 +1,59 @@
+# --- PYTHON ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- ENVIRONNEMENTS VIRTUELS ---
+.venv/
+venv/
+ENV/
+env/
+
+# --- CONFIGURATION & SECRETS (TRÈS IMPORTANT) ---
+.env
+*.env
+secrets.json
+config/secrets.yaml
+
+# --- JUPYTER NOTEBOOKS (si tu en utilises) ---
+.ipynb_checkpoints
+*_checkpoint.py
+*_checkpoint.ipynb
+
+# --- IDE & OS ---
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# PyCharm / JetBrains
+.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
