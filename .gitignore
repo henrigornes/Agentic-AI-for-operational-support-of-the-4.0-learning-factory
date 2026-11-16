@@ -1,0 +1,13 @@
+# Ignore tous les dossiers venv peu importe leur emplacement
+**/venv/
+venv/
+
+# Artefacts et profils
+.app_profile/
+dist/
+build/
+*.spec
+__pycache__/
+
+# Sécurité
+.env

@@ -1,0 +1,5 @@
+# Force l'analyse du projet en Python pur
+*.py linguist-detectable=true
+*.html linguist-detectable=false
+*.js linguist-detectable=false
+*.css linguist-detectable=false
