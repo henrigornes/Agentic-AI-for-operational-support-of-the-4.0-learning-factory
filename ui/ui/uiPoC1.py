@@ -1,5 +1,23 @@
+import uuid
 import streamlit as st
 import ollama
+
+# ==========================================
+# 0. DEFINITION DES IDENTIFIANTS UNIQUE PAR CONVERSATION
+# ==========================================
+
+def create_new_conversations(title = None):
+    conv_id = str(uuid.uuid4())[:8]
+    index = len(st.session_state.get("conversations", {})) + 1
+    st.session_state.conversations[conv_id] = {"title": title or f"Conversation {index}", "messages": []}
+    return conv_id
+
+if "conversations" not in st.session_state:
+    st.session_state.conversations = {}
+    st.session_state.active_conversation_id = create_new_conversations("Conversation 1")
+
+if st.session_state.active_conversation_id not in st.session_state.conversations:
+    st.session_state.active_conversation_id = next(iter(st.session_state.conversations.keys()))
 
 # ==========================================
 # 1. CONFIGURATION DE LA PAGE & DESIGN
@@ -12,7 +30,7 @@ st.set_page_config(
 # ==========================================
 # 2. MODULE CONNEXION LLM (Isole pour modularite)
 # ==========================================
-def query_local_llm(prompt: str, model_name: str, system_prompt: str = "") -> str:
+def query_local_llm(prompt, model_name, system_prompt):
     """
     Envoie le prompt au LLM local via Ollama.
     Cette fonction est conçue pour être remplacée plus tard par l'appel à l'Orchestrateur LangGraph.
@@ -24,10 +42,7 @@ def query_local_llm(prompt: str, model_name: str, system_prompt: str = "") -> st
         
         messages.append({"role": "user", "content": prompt})
 
-        response = ollama.chat(
-            model=model_name,
-            messages=messages
-        )
+        response = ollama.chat(model=model_name,messages=messages) #Modèle et prompt pour Ollama
         return response['message']['content']
     except Exception as e:
         return f"Erreur de communication avec Ollama : {e}. Assure-toi que le service tourne en local."
@@ -35,7 +50,7 @@ def query_local_llm(prompt: str, model_name: str, system_prompt: str = "") -> st
 # ==========================================
 # 3. INTERFACE UTILISATEUR (UI) - STREAMLIT
 # ==========================================
-st.title("PJE 17 — Plateforme IA Agentique (PoC Interface)")
+st.title("PJE 17 — Plateforme IA Agentique (Proof of Concept V0.1)")
 st.markdown("*Assistant d'aide au pilotage pour l'usine-école 4.0 (Point d'entrée unique)*")
 
 # Barre latérale pour la configuration modulaire du PoC
@@ -43,20 +58,13 @@ with st.sidebar:
     st.header("Paramètres du PoC")
     
     # Choix du modèle local
-    selected_model = st.selectbox(
-        "Modèle Ollama (Open Weights)",
-        ["llama3.2:3b"],
-        index=0
-    )
+    selected_model = st.selectbox("Modèle Ollama (Open Weights)", ["llama3.2:3b"], index=0)
     
     st.divider()
     
     # Zone pour tester des prompts système prédéfinis
     st.subheader("Scénarios de Test / Prompts")
-    prompt_mode = st.radio(
-        "Mode d'interaction :",
-        ["Libre (Chat direct)", "Simulateur d'Agent Diagnostique", "Simulateur d'Agent Actions Correctives"]
-    )
+    prompt_mode = st.radio("Mode d'interaction :",["Libre (Chat direct)", "Simulateur d'Agent Diagnostique", "Simulateur d'Agent Actions Correctives"])
     
     if prompt_mode == "Simulateur d'Agent Diagnostique":
         system_prompt = "Tu es l'Agent Diagnostique de l'usine-école 4.0. Tu analyses les pannes à partir des données capteurs."
