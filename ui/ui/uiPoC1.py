@@ -46,15 +46,40 @@ def query_local_llm(prompt, model_name, system_prompt):
         return response['message']['content']
     except Exception as e:
         return f"Erreur de communication avec Ollama : {e}. Assure-toi que le service tourne en local."
-
 # ==========================================
 # 3. INTERFACE UTILISATEUR (UI) - STREAMLIT
 # ==========================================
+active_conv = st.session_state.conversations[st.session_state.active_conversation_id]
+
 st.title("PJE 17 — Plateforme IA Agentique (Proof of Concept V0.1)")
 st.markdown("*Assistant d'aide au pilotage pour l'usine-école 4.0 (Point d'entrée unique)*")
 
 # Barre latérale pour la configuration modulaire du PoC
 with st.sidebar:
+    st.header("Conversations")
+    if st.button("Nouvelle Conversation", use_container_width=True):
+        new_conv_id = create_new_conversations()
+        st.session_state.active_conversation_id = new_conv_id
+        st.rerun()
+    for conv_id, conv_data in list(st.session_state.conversations.items()):
+        is_active = conv_id == st.session_state.active_conversation_id
+        icon = "🟢" if is_active else "⚪"
+        label = f"{icon} {conv_data['title']}"
+        col1, col2 = st.columns([0.8, 0.2], vertical_alignment="center")
+        with col1:
+            if st.button(label, key=f"conv_{conv_id}", use_container_width=True, type="primary" if is_active else "secondary"):
+                st.session_state.active_conversation_id = conv_id
+                st.rerun()
+        with col2:
+            if st.button("❌", key=f"del_{conv_id}", use_container_width=True):
+                del st.session_state.conversations[conv_id]
+                if not st.session_state.conversations:
+                    new_conv_id = create_new_conversations("Conversation 1")
+                    st.session_state.active_conversation_id = new_conv_id
+                elif st.session_state.active_conversation_id == conv_id:
+                    st.session_state.active_conversation_id = next(iter(st.session_state.conversations.keys()))
+                st.rerun()
+    st.divider()
     st.header("Paramètres du PoC")
     
     # Choix du modèle local
@@ -79,6 +104,14 @@ with st.sidebar:
     if st.button("Réinitialiser la conversation"):
         st.session_state.messages = []
         st.rerun()
+active_conv = st.session_state.conversations[st.session_state.active_conversation_id]
+st.caption(f"Conversation active : {active_conv['title']} (ID: {st.session_state.active_conversation_id})")
+
+"""#####
+
+Continuer 
+
+#####"""
 
 # Initialisation de l'historique de conversation
 if "messages" not in st.session_state:
