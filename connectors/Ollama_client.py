@@ -18,7 +18,7 @@ def detecter_ollama():
     return "http://localhost:11434"
 
 def call_ollama(prompt, model=None, base_url=None, json_mode=True):
-    url = 
+    url = ""  #A revoir, à compléter éventuellement
     payload = {"model": model,"prompt": prompt,"stream": False}
     if json_mode:
         payload["format"] = "json"
