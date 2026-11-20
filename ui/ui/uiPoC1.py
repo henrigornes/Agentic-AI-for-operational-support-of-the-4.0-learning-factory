@@ -116,8 +116,12 @@ for message in active_conv["messages"]:
 # Entrée utilisateur (Point d'entrée unique conversationnel)
 if user_input := st.chat_input("Posez votre question sur l'état d'un poste ou une anomalie..."):
 
-###A completer ensuite 
 
+    active_conv["messages"].append({"role": "user", "content": user_input})
+    if active_conv["title"].startswith("Conversation") and len(active_conv["message"]) == 1:
+        
+        active_conv["title"] = user_input[:30] + ("..." if len(user_input) > 30 else "")
+    ###avancer 
 
 
     # Enregistrement et affichage du message utilisateur
