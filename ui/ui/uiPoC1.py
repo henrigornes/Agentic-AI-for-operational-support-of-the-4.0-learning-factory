@@ -107,24 +107,19 @@ with st.sidebar:
 active_conv = st.session_state.conversations[st.session_state.active_conversation_id]
 st.caption(f"Conversation active : {active_conv['title']} (ID: {st.session_state.active_conversation_id})")
 
-"""#####
 
-Continuer 
-
-#####"""
-
-# Initialisation de l'historique de conversation
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Affichage des messages de l'historique
-for message in st.session_state.messages:
+for message in active_conv["messages"]:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+
 # Entrée utilisateur (Point d'entrée unique conversationnel)
 if user_input := st.chat_input("Posez votre question sur l'état d'un poste ou une anomalie..."):
-    
+
+###A completer ensuite 
+
+
+
     # Enregistrement et affichage du message utilisateur
     st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
