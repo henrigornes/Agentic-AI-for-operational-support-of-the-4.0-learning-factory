@@ -118,27 +118,18 @@ if user_input := st.chat_input("Posez votre question sur l'état d'un poste ou u
 
 
     active_conv["messages"].append({"role": "user", "content": user_input})
-    if active_conv["title"].startswith("Conversation") and len(active_conv["message"]) == 1:
+    if active_conv["title"] == f"Conversation {len(st.session_state.conversations)}":
         
         active_conv["title"] = user_input[:30] + ("..." if len(user_input) > 30 else "")
     ###avancer 
-
-
-    # Enregistrement et affichage du message utilisateur
-    st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
         st.markdown(user_input)
-
-    # Génération de la réponse via le module LLM isolé
     with st.chat_message("assistant"):
         with st.spinner("L'orchestrateur analyse votre demande..."):
-            
             bot_response = query_local_llm(
                 prompt=user_input, 
                 model_name=selected_model, 
                 system_prompt=system_prompt
             )
-            
             st.markdown(bot_response)
-            
-            st.session_state.messages.append({"role": "assistant", "content": bot_response})
+    active_conv["messages"].append({"role": "assistant", "content": bot_response})
